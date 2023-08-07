@@ -1,7 +1,35 @@
+using AuthorizationServer.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+
+builder.Services.AddDbContext<AuthServerDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("connString"));
+    options.UseOpenIddict();
+});
+
+builder.Services.AddOpenIddict().AddCore(options =>
+{
+    options.UseEntityFrameworkCore().UseDbContext<AuthServerDbContext>();
+}).AddServer(options =>
+{
+    options.AllowClientCredentialsFlow();
+    options.SetTokenEndpointUris("/connect/token");
+    options.AddEphemeralEncryptionKey().AddEphemeralSigningKey();
+    options.RegisterScopes("api");
+    options.UseAspNetCore().EnableTokenEndpointPassthrough();
+});
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+        .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+        {
+            options.LoginPath = "/account/login";
+        });
 
 var app = builder.Build();
 
@@ -17,7 +45,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
