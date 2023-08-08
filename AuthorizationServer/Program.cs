@@ -1,3 +1,4 @@
+using AuthorizationServer;
 using AuthorizationServer.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +31,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         {
             options.LoginPath = "/account/login";
         });
-
+builder.Services.AddHostedService<TestData>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
