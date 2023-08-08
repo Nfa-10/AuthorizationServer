@@ -11,7 +11,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
         {
             options.LoginPath = "/account/login";
-            options.ExpireTimeSpan = TimeSpan.FromDays(1);
+           
         });
 
 builder.Services.AddDbContext<AuthServerDbContext>(options =>
@@ -27,11 +27,11 @@ builder.Services.AddOpenIddict().AddCore(options =>
 {
     options.AllowClientCredentialsFlow();
     options.SetTokenEndpointUris("/connect/token");
-    options.AddEphemeralEncryptionKey().AddEphemeralSigningKey();
+    options.AddEphemeralEncryptionKey().AddEphemeralSigningKey().DisableAccessTokenEncryption(); 
     options.RegisterScopes("api");
     options.UseAspNetCore().EnableTokenEndpointPassthrough();
 });
-
+builder.Services.AddHostedService<TestData>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
