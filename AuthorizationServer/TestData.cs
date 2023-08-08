@@ -23,11 +23,11 @@ namespace AuthorizationServer
 
             var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
 
-            if (await manager.FindByClientIdAsync("client1", cancellationToken) is null)
+            if (await manager.FindByClientIdAsync("postman", cancellationToken) is null)
             {
                 await manager.CreateAsync(new OpenIddictApplicationDescriptor
                 {
-                    ClientId = "client1",
+                    ClientId = "postman",
                     ClientSecret = "client-secret",
                     DisplayName = "FirstClient",
                     Permissions =

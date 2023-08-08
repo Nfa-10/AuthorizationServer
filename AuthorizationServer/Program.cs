@@ -7,7 +7,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+        .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+        {
+            options.LoginPath = "/account/login";
+           
+        });
 
 builder.Services.AddDbContext<AuthServerDbContext>(options =>
 {
@@ -22,15 +27,10 @@ builder.Services.AddOpenIddict().AddCore(options =>
 {
     options.AllowClientCredentialsFlow();
     options.SetTokenEndpointUris("/connect/token");
-    options.AddEphemeralEncryptionKey().AddEphemeralSigningKey();
+    options.AddEphemeralEncryptionKey().AddEphemeralSigningKey().DisableAccessTokenEncryption(); 
     options.RegisterScopes("api");
     options.UseAspNetCore().EnableTokenEndpointPassthrough();
 });
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-        .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-        {
-            options.LoginPath = "/account/login";
-        });
 builder.Services.AddHostedService<TestData>();
 var app = builder.Build();
 
@@ -47,10 +47,11 @@ app.UseStaticFiles();
 
 app.UseRouting();
 app.UseAuthentication();
-app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapDefaultControllerRoute();
+});
 
 app.Run();
