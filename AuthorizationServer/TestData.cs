@@ -27,7 +27,7 @@ namespace AuthorizationServer
             {
                 await manager.CreateAsync(new OpenIddictApplicationDescriptor
                 {
-                    ClientId = "client1",
+                    ClientId = "client",
                     ClientSecret = "client-secret",
                     DisplayName = "FirstClient",
                     Permissions =
